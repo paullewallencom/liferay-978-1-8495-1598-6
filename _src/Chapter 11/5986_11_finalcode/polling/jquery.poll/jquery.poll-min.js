@@ -1,0 +1,16 @@
+(function($){var randomString=function(numchars){var chars="0123456789ABCDEFGHJKMNPQRSTUVWXYZabcdefghkmnpqrstuvwxyz";var randomstring='';for(var i=0;i<numchars;i++){var rnum=Math.floor(Math.random()*chars.length);randomstring+=chars.substring(rnum,rnum+1);}
+return randomstring;};var Poller=function(ajaxopt,pollopt){this.setAjaxOptions(ajaxopt);this.name=(typeof(pollopt.name)!='undefined')?pollopt.name:randomString(4);this.min_wait=(typeof(pollopt.min_wait)!='undefined')?pollopt.min_wait:1000;this.max_wait=(typeof(pollopt.max_wait)!='undefined')?pollopt.max_wait:30000;this.current_wait=this.min_wait;this.wait_multiplier=(typeof(pollopt.wait_multiplier)!='undefined')?pollopt.wait_multiplier:2;this.stop=false;this.doLog=(typeof(pollopt.doLog)!='undefined')?pollopt.doLog:true;this.current_poll=false;this.userdata={};if(typeof(pollopt.adjustWait)!='undefined'){this.adjustWait=pollopt.adjustWait;}};Poller.prototype.log=function(logstring){if(this.doLog&&typeof(console)!='undefined'&&console!=null){console.log('Poll '+this.name+': '+logstring);}};Poller.prototype.setAjaxOptions=function(options){if(typeof(options)=='string'){options={url:options};}
+if(this.settings){oldsettings=this.settings;}else{oldsettings={};}
+var newSettings=jQuery.extend(true,{},jQuery.ajaxSettings,oldsettings);if(options){jQuery.extend(true,newSettings,options);}
+if(typeof(newSettings.data)!='undefined'){if(jQuery.isFunction(newSettings.data)){this.dataCallback=newSettings.data;}else{this.userdata=newSettings.data;}
+delete newSettings.data;}
+if(jQuery.isFunction(newSettings.complete)){this.userComplete=newSettings.complete;delete newSettings.complete;}
+this.settings=newSettings;};Poller.prototype.fetch=function(){self=this;if(!this.stop){if(!this.current_poll){this.fetchNow();}else{this.log('last XHR not complete, skipping fetch');}
+var anotherFetch=function(){self.fetch();}
+this.log('next check in '+this.current_wait+'ms');this.current_poll=setTimeout(anotherFetch,this.current_wait);}else{this.log('stopped.');}};Poller.prototype.dataCallback=function(){return this.userdata;};Poller.prototype.fetchNow=function(){var calls={ifModified:true,complete:this.completeCallback,data:this.dataCallback(),};var opts=$.extend(true,calls,this.settings);$.ajax(opts);};Poller.prototype.completeCallback=function(xhr,textStatus){self.log('complete: '+textStatus);self.current_poll=false;if($.isFunction(self.adjustWait)){self.current_wait=self.adjustWait(xhr,textStatus,self.current_wait);}else if(textStatus!='success'){next_wait=self.current_wait*self.wait_multiplier;if(next_wait<=self.max_wait){self.current_wait=next_wait;}else{self.current_wait=self.max_wait;}
+if($.isFunction(self.userError)){self.userError(xhr,textStatus);}}
+if($.isFunction(self.userComplete)){self.userComplete(xhr,textStatus);}};Poller.prototype.setWait=function(wait){if(wait<this.current_wait&&this.current_poll){clearTimeout(this.current_poll);this.current_poll=false;}
+if(wait){this.current_wait=wait;}
+this.fetch();};$.poll=function(ajaxopt,pollopt,dontstart){if(typeof(pollopt)=='undefined'||pollopt==null){pollopt={};}
+poller=new Poller(ajaxopt,pollopt);if(!dontstart){poller.fetch();}
+return poller;};})(jQuery);

@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!DOCTYPE hook PUBLIC "-//Liferay//DTD Hook 6.1.0//EN" "http://www.liferay.com/dtd/liferay-hook_6_1_0.dtd">
+
+<hook>
+	<portal-properties>portal.properties</portal-properties>
+	<language-properties>content/Language_de.properties</language-properties>
+	<custom-jsp-dir>/META-INF/custom_jsps</custom-jsp-dir>
+	<custom-jsp-global>false</custom-jsp-global>
+	<service>
+		<service-type>com.liferay.portal.service.UserLocalService</service-type>
+		<service-impl>com.liferay.knowledgebase.hook.service.impl.KBUserLocalServiceImpl</service-impl>
+	</service>
+	<servlet-filter>
+		<servlet-filter-name>Knowledge Base Filter</servlet-filter-name>
+		<servlet-filter-impl>com.liferay.knowledgebase.hook.filter.KBFilter</servlet-filter-impl>
+		<init-param>
+			<param-name>knowledge</param-name>
+			<param-value>base</param-value>
+		</init-param>
+	</servlet-filter>
+	<servlet-filter-mapping>
+	<servlet-filter-name>Knowledge Base Filter</servlet-filter-name>
+		<before-filter>SSO Open SSO Filter</before-filter>
+		<url-pattern>/group/*</url-pattern>
+		<url-pattern>/user/*</url-pattern>
+		<url-pattern>/web/*</url-pattern>
+		<url-pattern>*.jsp</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</servlet-filter-mapping>	
+	<indexer-post-processor>
+		<indexer-model-name>com.liferay.portal.model.User</indexer-model-name>
+		<indexer-post-processor-impl>com.liferay.knowledgebase.hook.indexer.UserIndexerPostProcessor</indexer-post-processor-impl>
+	</indexer-post-processor>
+	<struts-action>
+		<struts-action-path>/portal/knowledge_base/find_kb_article</struts-action-path>
+		<struts-action-impl>com.liferay.knowledgebase.hook.action.FindKBArticleAction</struts-action-impl>
+	</struts-action>
+	<struts-action>
+		<struts-action-path>/message_boards/view</struts-action-path>
+		<struts-action-impl>com.liferay.knowledgebase.hook.action.KBStrutsPortletAction</struts-action-impl>
+	</struts-action>
+</hook>

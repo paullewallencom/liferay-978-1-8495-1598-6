@@ -1,0 +1,44 @@
+<script type="text/javascript">
+YAHOO.util.Event.addListener(window, "load", function() {
+    YAHOO.example.Polling = function() {
+        var counter = 0;
+        var dataIncrementer = function() {
+            counter++;
+            return [{
+                count:counter, 
+                description:"At the tone the time will be: ", 
+                time: YAHOO.util.Date.format(new Date(), {format:"%I:%M:%S %p"})
+            }];
+        };
+
+        var myColumnDefs = [
+            {key: "count"},
+            {key: "description"},
+            {key: "time"}
+        ];
+
+        var myDataSource = new YAHOO.util.DataSource(dataIncrementer);
+        myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
+        myDataSource.responseSchema = {
+            fields: ["count", "description", "time"]
+        };
+
+        var myDataTable = new YAHOO.widget.DataTable("polling",
+                myColumnDefs, myDataSource);
+                
+        // Set up polling
+        var myCallback = {
+            success: myDataTable.onDataReturnInitializeTable,
+            failure: function() {
+                YAHOO.log("Polling failure", "error");
+            },
+            scope: myDataTable
+        };
+        myDataSource.setInterval(5000, null, myCallback);
+                
+        return {
+            oDS: myDataSource,
+            oDT: myDataTable
+        };
+    }();
+});

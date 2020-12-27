@@ -1,0 +1,36 @@
+<!--
+This configuration is optimized for Terracotta DSO. The attribute
+maxElementsInMemory has been increased to account for the capabilities that
+Terracotta provides.
+-->
+
+<ehcache name="liferay-hibernate" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ehcache.xsd">
+
+	<defaultCache
+		maxElementsInMemory="100000"
+		eternal="false"
+        timeToIdleSeconds="600"
+		overflowToDisk="false"
+	>
+		<terracotta />
+	</defaultCache>
+	<cache
+		name="org.hibernate.cache.UpdateTimestampsCache"
+		maxElementsInMemory="100000"
+		eternal="true"
+		overflowToDisk="false"
+	>
+		<terracotta />
+	</cache>
+	<cache
+		name="com.liferay.portal.model.impl.UserImpl"
+		maxElementsInMemory="100000"
+		eternal="false"
+        timeToIdleSeconds="600"
+		overflowToDisk="false"
+	>
+		<terracotta />
+	</cache>
+
+	<terracottaConfig url="localhost:9510"/>
+</ehcache>

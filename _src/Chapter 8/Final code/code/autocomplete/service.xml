@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 6.1.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_6_1_0.dtd">
+
+<service-builder package-path="com.liferay.knowledgebase" auto-namespace-tables="false">
+	<namespace>AutoComplete</namespace>
+	<entity name="SearchKeyword" local-service="true" remote-service="true">
+	    
+	    <!-- PK fields -->
+	    
+	    <column name="keywordId" type="long" primary="true" />
+	    
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
+		
+	    <!-- Audit fields -->
+	    
+	    <column name="companyId" type="long" />
+	    <column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+	    
+	    <!-- Other fields -->
+
+		<column name="classNameId" type="long" />
+	    <column name="keyword" type="String" />
+	    
+	    <!-- Order -->
+	    
+	    <order by="desc">
+	        <order-column name="modifiedDate" />
+	    </order>
+	    
+	    <!-- Finder methods -->
+	    
+	    <finder name="C_G_C" return-type="Collection">
+			<finder-column name="companyId" />
+			<finder-column name="groupId" />
+			<finder-column name="classNameId" />
+		</finder>
+		
+		<finder name="C_G" return-type="Collection">
+			<finder-column name="companyId" />
+			<finder-column name="groupId" />
+		</finder>
+		
+		<finder name="C_C" return-type="Collection">
+			<finder-column name="companyId" />
+			<finder-column name="classNameId" />
+		</finder>
+	</entity>
+	<exceptions>
+		<exception>SearchKeywordException</exception>
+	</exceptions>
+</service-builder>

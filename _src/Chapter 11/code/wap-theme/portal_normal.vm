@@ -1,0 +1,37 @@
+<!DOCTYPE html> 
+
+#parse ($init)
+
+#set ($isIphone = $request.getHeader("User-Agent").toLowerCase().indexOf("iphone") != -1)
+
+<html>
+
+<head>
+	<title>$the_title - $company_name</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+	
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+   
+	#if ($isIphone)
+		<meta name="viewport" content="width=device-width, initial-scale=1; maximum-scale=1.0; minimum-scale=1.0, user-scalable=0" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+
+		<link rel="apple-touch-icon" href="$images_folder/apple-touch-icon.png" />
+
+	#end
+	
+	<link rel="stylesheet" href="$css_folder/main.css" type="text/css" title="$company_name style" />
+	
+	<script src="$javascript_folder/jquery-1.6.2.min.js" type="text/javascript"></script>
+	<script src="$javascript_folder/jquery.mobile-1.0b2.min.js" type="text/javascript"></script>
+
+</head>
+
+<body>
+
+$theme.include($content_include)
+
+</body>
+
+</html>
